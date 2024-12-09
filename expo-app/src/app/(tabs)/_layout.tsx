@@ -1,13 +1,14 @@
+import { Platform } from "react-native";
+
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { Tabs } from "expo-router";
-import React from "react";
-import { Platform } from "react-native";
+import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
-import Foundation from "@expo/vector-icons/Foundation";
-import { useColorScheme } from "@/src/hooks/useColorScheme.web";
-import { HapticTab } from "@/src/components/HapticTab";
-import TabBarBackground from "@/src/components/ui/TabBarBackground";
-import { Colors } from "@/src/constants/Colors";
+
+import { useColorScheme } from "~/src/hooks/useColorScheme.web";
+import { HapticTab } from "~/src/components/HapticTab";
+import TabBarBackground from "~/src/components/ui/TabBarBackground";
+import { Colors } from "~/src/constants/Colors";
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
@@ -30,9 +31,9 @@ export default function TabLayout() {
       <Tabs.Screen
         name="index"
         options={{
-          title: "Index",
-          tabBarIcon: ({ color }) => (
-            <Foundation name="home" size={24} color="orange" />
+          title: "Notes",
+          tabBarIcon: ({}) => (
+            <FontAwesome5 name="sticky-note" size={24} color="orange" />
           ),
         }}
       />
@@ -40,7 +41,7 @@ export default function TabLayout() {
         name="search"
         options={{
           title: "search",
-          tabBarIcon: ({ color }) => (
+          tabBarIcon: ({}) => (
             <MaterialIcons name="search" size={24} color="blue" />
           ),
         }}
@@ -49,7 +50,7 @@ export default function TabLayout() {
         name="settings"
         options={{
           title: "settings",
-          tabBarIcon: ({ color }) => (
+          tabBarIcon: ({}) => (
             <FontAwesome name="gear" size={24} color="green" active={true} />
           ),
         }}

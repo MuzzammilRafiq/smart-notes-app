@@ -1,4 +1,5 @@
 from pydantic import BaseModel
+from typing import List
 
 
 class GetEmbeddingsRequest(BaseModel):
@@ -6,8 +7,8 @@ class GetEmbeddingsRequest(BaseModel):
 
 
 class AddEmbeddingsRequest(BaseModel):
-    texts: list[str]
-    userIds: list[str]
+    texts: List[str]
+    userIds: List[str]
 
 
 class GetSimilarEmbeddingsRequest(BaseModel):
@@ -16,7 +17,7 @@ class GetSimilarEmbeddingsRequest(BaseModel):
 
 
 class EmbeddingRequest(BaseModel):
-    texts: list[str]
+    texts: List[str]
 
 
 class QueryRequest(BaseModel):
@@ -26,5 +27,10 @@ class QueryRequest(BaseModel):
 
 
 class CentroidRequest(BaseModel):
-    texts: list[list[str]]
-    labels: list[str]
+    texts: List[List[str]]
+    labels: List[str]
+
+
+class GetGroupForText(BaseModel):
+    texts: List[str]
+    n_results: int = 2

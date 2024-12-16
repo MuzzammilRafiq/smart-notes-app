@@ -10,6 +10,7 @@ from pydantic_models import (
     AddEmbeddingsRequest,
     GetSimilarEmbeddingsRequest,
     CentroidRequest,
+    GetGroupForText,
 )
 from utils.utils import generate_centriods
 from utils.model import model
@@ -42,10 +43,6 @@ def add_embeddings(request: AddEmbeddingsRequest):
             {"userId": str(userId), "timestamp": float(time.time())}
             for userId in request.userIds
         ]
-        # print("texts", request.texts)
-        # print("userIds", request.userIds)
-        # print("embeddings", len(embeddings), len(embeddings[0]))
-        # print("ids", ids)
 
         response = collection.add(
             embeddings=embeddings, documents=request.texts, metadatas=metadata, ids=ids
@@ -122,6 +119,23 @@ def get_all_centroids():
         collection = chroma_client.get_or_create_collection(name="centroids")
         results = collection.get()
         return results
+    except Exception as e:
+        print(e)
+        raise HTTPException(status_code=500, detail="internal server error")
+
+
+@router.get("/get-group")
+def get_group_of_texts(request: GetGroupForText):
+    try:
+        texts = request.texts
+        embeds = model.generate_embeddings(texts)
+        n_results = int(request.n_results)
+        collection = chroma_client.get_or_create_collection(name="centroids")
+        r = collection.query(
+            query_embeddings=embeds,
+            n_results=n_results,
+        )
+        return r
     except Exception as e:
         print(e)
         raise HTTPException(status_code=500, detail="internal server error")

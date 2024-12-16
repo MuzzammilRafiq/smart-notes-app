@@ -23,3 +23,8 @@ class QueryRequest(BaseModel):
     query: str
 
     n_results: int = 5
+
+
+class CentroidRequest(BaseModel):
+    texts: list[list[str]]
+    labels: list[str]

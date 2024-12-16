@@ -6,13 +6,16 @@ import time
 
 # local imports
 from connection import ChromaDBConnection
-from pydantic_models import AddEmbeddingsRequest, GetSimilarEmbeddingsRequest
-from Model import EmbeddingsModel
-
+from pydantic_models import (
+    AddEmbeddingsRequest,
+    GetSimilarEmbeddingsRequest,
+    CentroidRequest,
+)
+from utils.utils import generate_centriods
+from utils.model import model
 
 router = APIRouter()
 chroma_client = ChromaDBConnection().get_connection()
-model = EmbeddingsModel("all-mpnet-base-v2")
 T = TypeVar("T")
 OneOrMany = Union[T, List[T]]
 
@@ -39,10 +42,10 @@ def add_embeddings(request: AddEmbeddingsRequest):
             {"userId": str(userId), "timestamp": float(time.time())}
             for userId in request.userIds
         ]
-        print("texts", request.texts)
-        print("userIds", request.userIds)
-        print("embeddings", len(embeddings), len(embeddings[0]))
-        print("ids", ids)
+        # print("texts", request.texts)
+        # print("userIds", request.userIds)
+        # print("embeddings", len(embeddings), len(embeddings[0]))
+        # print("ids", ids)
 
         response = collection.add(
             embeddings=embeddings, documents=request.texts, metadatas=metadata, ids=ids
@@ -74,4 +77,51 @@ def get_similar_embeddings(request: GetSimilarEmbeddingsRequest):
         )  # Raise HTTPException
 
 
-# @router.get("/get-similar-embeddings-by-id")
+@router.get("/get-similar-embeddings-by-id")
+def get_similar_embeddings_by_id(request: Request):
+    try:
+        userId = request.query_params["userId"]
+        collection = chroma_client.get_or_create_collection(name="all_collections")
+        r = collection.query_by_id(id=userId)
+        return r
+    except Exception as e:
+        print(e)
+        raise HTTPException(status_code=500, detail="internal server error")
+
+
+@router.post("/create-centroids")
+def create_centroids(request: CentroidRequest):
+    try:
+        # print(request.texts)
+        print("____________")
+        print(request.labels)
+        assert len(request.texts) == len(request.labels)
+        centroids = generate_centriods(request.texts)
+        collection = chroma_client.get_or_create_collection(name="centroids")
+        ids = [str(uuid.uuid4()) for _ in range(len(request.texts))]
+        metadata: OneOrMany[Metadata] = [
+            {"label": str(label), "timestamp": float(time.time())}
+            for label in request.labels
+        ]
+        response = collection.add(
+            embeddings=centroids, documents=request.labels, metadatas=metadata, ids=ids
+        )
+
+        return {
+            "status": "Centroids added successfully",
+        }
+
+    except Exception as e:
+        print(e)
+        raise HTTPException(status_code=500, detail="internal server error")
+
+
+@router.get("/get-all-centroids")
+def get_all_centroids():
+    try:
+        collection = chroma_client.get_or_create_collection(name="centroids")
+        results = collection.get()
+        return results
+    except Exception as e:
+        print(e)
+        raise HTTPException(status_code=500, detail="internal server error")

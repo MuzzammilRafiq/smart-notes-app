@@ -24,8 +24,8 @@ class ChromaDBConnection:
         return self._client
 
 
-# connect = ChromaDBConnection()
-# chroma_client = connect.get_connection()
+connect = ChromaDBConnection()
+chroma_client = connect.get_connection()
 
 if __name__ == "__main__":
     connect = ChromaDBConnection()

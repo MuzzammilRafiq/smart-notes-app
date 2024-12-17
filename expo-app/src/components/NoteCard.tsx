@@ -1,53 +1,83 @@
 // NoteCard.tsx
 import React from "react";
-import { View, Text, StyleSheet, Dimensions } from "react-native";
-import { ThemedView } from "./ThemedView";
+import { StyleSheet, View } from "react-native";
 import { ThemedText } from "./ThemedText";
+import { Link } from "expo-router";
+import { Note } from "../utils/types";
 
-interface NoteProps {
-  text: string;
-  timestamp?: Date;
-  backgroundColor?: string;
-  category?: string;
-}
+const SPACING = {
+  xs: 4,
+  sm: 8,
+  md: 16,
+  lg: 24,
+};
 
-export const NoteCard: React.FC<NoteProps> = ({
-  text,
-  timestamp = new Date(),
-  backgroundColor,
-  category,
-}) => {
+const COLORS = {
+  cardBg: "#ffffff",
+  border: "#e0e0e0",
+  title: "#2d3748",
+  preview: "#718096",
+};
+
+export const NoteCard: React.FC<Note> = (note) => {
+  const previewText =
+    note.body.substring(0, 40) + (note.body.length > 40 ? "..." : "");
+  const formattedDate = new Date(note.dateCreated).toLocaleDateString();
+
   return (
-    <ThemedView style={[styles.container, { backgroundColor }]}>
-      <ThemedText style={styles.noteText}>{text}</ThemedText>
-      <ThemedText style={styles.timestamp}>
-        {category}
-        {timestamp.toLocaleDateString()}
-      </ThemedText>
-    </ThemedView>
+    <Link
+      href={{
+        // @ts-ignore
+        pathname: `/note/${note.id}`,
+        params: {
+          title: note.title,
+          body: note.body,
+          dateCreated: note.dateCreated.toISOString(),
+          group: note.group,
+        },
+      }}
+      style={styles.card}
+    >
+      <View>
+        <ThemedText style={styles.title}>{note.title}</ThemedText>
+        <ThemedText style={styles.preview}>{previewText}</ThemedText>
+        <ThemedText style={styles.date}>{formattedDate}</ThemedText>
+      </View>
+    </Link>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    width: Dimensions.get("window").width * 0.9,
-    padding: 16,
-    marginVertical: 8,
-    shadowColor: "#fff",
+  card: {
+    backgroundColor: COLORS.cardBg,
+    borderRadius: SPACING.sm,
+    padding: SPACING.md,
+    marginVertical: SPACING.xs,
+    borderWidth: 1,
+    borderColor: COLORS.border,
+    shadowColor: "#000",
     shadowOffset: {
       width: 0,
       height: 2,
     },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 5,
+    shadowOpacity: 0.1,
+    shadowRadius: 3,
+    elevation: 3,
   },
-  noteText: {
-    fontSize: 16,
-    marginBottom: 8,
+  title: {
+    fontSize: 18,
+    fontWeight: "600",
+    color: COLORS.title,
+    marginBottom: SPACING.xs,
   },
-  timestamp: {
+  preview: {
+    fontSize: 14,
+    color: COLORS.preview,
+    marginBottom: SPACING.sm,
+  },
+  date: {
     fontSize: 12,
-    alignSelf: "flex-end",
+    color: COLORS.preview,
+    marginTop: SPACING.xs,
   },
 });

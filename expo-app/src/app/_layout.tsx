@@ -16,6 +16,9 @@ SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
   const colorScheme = useColorScheme();
+  const isDarkMode = colorScheme === "dark";
+  const theme = isDarkMode ? DarkTheme : DefaultTheme;
+
   const [loaded] = useFonts({
     SpaceMono: require("~/assets/fonts/SpaceMono-Regular.ttf"),
   });
@@ -31,10 +34,16 @@ export default function RootLayout() {
   }
 
   return (
-    <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
-      <SafeAreaView style={{ flex: 1 }}>
+    <ThemeProvider value={theme}>
+      <SafeAreaView
+        style={{
+          flex: 1,
+          backgroundColor: isDarkMode ? theme.colors.background : "#fff",
+        }}
+      >
         <Stack>
           <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+          <Stack.Screen name="note/[id]" />
           <Stack.Screen name="+not-found" />
         </Stack>
         <StatusBar style="auto" />

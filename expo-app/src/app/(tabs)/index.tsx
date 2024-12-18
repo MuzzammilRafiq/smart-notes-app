@@ -9,7 +9,6 @@ import { dummyNotes } from "~/src/utils/dummdata";
 
 export default function TabTwoScreen() {
   const notes = dummyNotes;
-
   return (
     <ParallaxScrollView title="Search">
       <ThemedView style={styles.titleContainer}>

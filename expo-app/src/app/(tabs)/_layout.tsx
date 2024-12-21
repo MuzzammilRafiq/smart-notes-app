@@ -1,7 +1,7 @@
 import { Platform, StyleSheet } from "react-native";
 
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
-import { Tabs } from "expo-router";
+import { Redirect, Tabs } from "expo-router";
 import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 
@@ -9,10 +9,16 @@ import { useColorScheme } from "~/src/hooks/useColorScheme.web";
 import { HapticTab } from "~/src/components/HapticTab";
 import TabBarBackground from "~/src/components/ui/TabBarBackground";
 import { Colors } from "~/src/constants/Colors";
+import { useAuth } from "~/src/providers/AuthProvider";
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
   const tintColor = Colors[colorScheme ?? "light"].tint;
+  const { session } = useAuth();
+
+  if (!session) {
+    return <Redirect href={"/(auth)/sign-in"} />;
+  }
 
   return (
     <Tabs

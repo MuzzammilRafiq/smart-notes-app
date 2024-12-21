@@ -1,10 +1,12 @@
 import { Href, Link } from "expo-router";
 import { StyleSheet } from "react-native";
-import { NoteCard } from "~/src/components/NoteCard";
 
+import Button from "~/src/components/Button";
+import { NoteCard } from "~/src/components/NoteCard";
 import ParallaxScrollView from "~/src/components/ParallaxScrollView";
 import { ThemedText } from "~/src/components/ThemedText";
 import { ThemedView } from "~/src/components/ThemedView";
+import { supabase } from "~/src/lib/supabase";
 import { dummyNotes } from "~/src/utils/dummdata";
 
 export default function TabTwoScreen() {
@@ -19,7 +21,7 @@ export default function TabTwoScreen() {
             gap: 20,
           }}
         >
-          {notes?.map((note) => (
+          {/* {notes?.map((note) => (
             <NoteCard
               key={note.id}
               id={note.id}
@@ -28,7 +30,9 @@ export default function TabTwoScreen() {
               dateCreated={note.dateCreated}
               group={note.group}
             />
-          ))}
+          ))} */}
+          <Button onPress={() => supabase.auth.signOut()} text="Sign out" />
+          <Button text="Sign out gg" />
         </ThemedView>
 
         {/* <Link href="/note/bacon">View user</Link> */}

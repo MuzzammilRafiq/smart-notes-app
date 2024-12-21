@@ -17,6 +17,7 @@ import Account from "../components/Account";
 import Auth from "../components/Auth";
 import { Session } from "@supabase/supabase-js";
 import { supabase } from "../lib/supabase";
+import AuthProvider from "../providers/AuthProvider";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -51,25 +52,28 @@ export default function RootLayout() {
 
   return (
     <ThemeProvider value={theme}>
-      <SafeAreaView
-        style={{
-          flex: 1,
-          backgroundColor: isDarkMode ? theme.colors.background : "#fff",
-        }}
-      >
-        {session && session.user ? (
+      <AuthProvider>
+        <SafeAreaView
+          style={{
+            flex: 1,
+            backgroundColor: isDarkMode ? theme.colors.background : "#fff",
+          }}
+        >
+          {/* {session && session.user ? ( */}
           <>
             <Stack>
               <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
               <Stack.Screen name="note/[id]" />
               <Stack.Screen name="+not-found" />
+              <Stack.Screen name="(auth)" options={{ headerShown: false }} />
             </Stack>
             <StatusBar style="auto" />
           </>
-        ) : (
-          <Auth />
-        )}
-      </SafeAreaView>
+          {/* ) : ( */}
+          {/* <Auth /> */}
+          {/* )} */}
+        </SafeAreaView>
+      </AuthProvider>
     </ThemeProvider>
   );
 }

@@ -16,7 +16,7 @@ import { ThemedView } from "../components/ThemedView";
 import Account from "../components/Account";
 import Auth from "../components/Auth";
 import { Session } from "@supabase/supabase-js";
-import { supabase } from "../lib/supabase";
+import { supabase } from "../supabase/supabase";
 import AuthProvider from "../providers/AuthProvider";
 
 SplashScreen.preventAutoHideAsync();

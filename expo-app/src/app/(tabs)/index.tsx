@@ -6,7 +6,7 @@ import { NoteCard } from "~/src/components/NoteCard";
 import ParallaxScrollView from "~/src/components/ParallaxScrollView";
 import { ThemedText } from "~/src/components/ThemedText";
 import { ThemedView } from "~/src/components/ThemedView";
-import { supabase } from "~/src/lib/supabase";
+import { supabase } from "~/src/supabase/supabase";
 import { dummyNotes } from "~/src/utils/dummdata";
 
 export default function TabTwoScreen() {

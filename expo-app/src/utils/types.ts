@@ -1,7 +1,10 @@
-export type Note = {
+export type NoteType= {
   id: string;
   title: string;
   body: string;
-  dateCreated: Date;
+  embed_id: string | null;
   group: string;
+  userId: string;
+  created_at: Date;
+  updated_at: Date;
 };

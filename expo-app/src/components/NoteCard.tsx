@@ -3,26 +3,15 @@ import React from "react";
 import { StyleSheet, View } from "react-native";
 import { ThemedText } from "./ThemedText";
 import { Link } from "expo-router";
-import { Note } from "../utils/types";
+import { NoteType } from "../utils/types";
+import { COLORS, SPACING } from "../utils/constants";
 
-const SPACING = {
-  xs: 4,
-  sm: 8,
-  md: 16,
-  lg: 24,
-};
+export const NoteCard = ({ note }: { note: NoteType }) => {
+  // note.created_at = new Date(note.created_at);
+  // note.updated_at = new Date(note.updated_at);
 
-const COLORS = {
-  cardBg: "#ffffff",
-  border: "#e0e0e0",
-  title: "#2d3748",
-  preview: "#718096",
-};
-
-export const NoteCard: React.FC<Note> = (note) => {
   const previewText =
     note.body.substring(0, 40) + (note.body.length > 40 ? "..." : "");
-  const formattedDate = new Date(note.dateCreated).toLocaleDateString();
 
   return (
     <Link
@@ -30,10 +19,9 @@ export const NoteCard: React.FC<Note> = (note) => {
         // @ts-ignore
         pathname: `/note/${note.id}`,
         params: {
-          title: note.title,
-          body: note.body,
-          dateCreated: note.dateCreated.toISOString(),
-          group: note.group,
+          ...note,
+          created_at: new Date(note.created_at).toISOString(),
+          updated_at: new Date(note.updated_at).toISOString(),
         },
       }}
       style={styles.card}
@@ -41,7 +29,12 @@ export const NoteCard: React.FC<Note> = (note) => {
       <View>
         <ThemedText style={styles.title}>{note.title}</ThemedText>
         <ThemedText style={styles.preview}>{previewText}</ThemedText>
-        <ThemedText style={styles.date}>{formattedDate}</ThemedText>
+        <ThemedText style={styles.date}>
+          {new Date(note.updated_at).toLocaleString(undefined, {
+            dateStyle: "short",
+            timeStyle: "short",
+          })}
+        </ThemedText>
       </View>
     </Link>
   );

@@ -62,30 +62,38 @@ export const useInsertNote = () => {
   });
 };
 
-export const useUpdateProduct = () => {
+export const useUpdateNote = ({
+  id,
+  title,
+  body,
+}: {
+  id: string;
+  title: string;
+  body: string;
+}) => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    async mutationFn(data: any) {
-      const { error, data: updatedProduct } = await supabase
-        .from("products")
+    mutationFn: async () => {
+      const { error, data: updatedNote } = await supabase
+        .from("notes")
         .update({
-          name: data.name,
-          image: data.image,
-          price: data.price,
+          body: body,
+          title: title,
+          updated_at: new Date(),
         })
-        .eq("id", data.id)
+        .eq("id", id)
         .select()
         .single();
 
       if (error) {
         throw new Error(error.message);
       }
-      return updatedProduct;
+      return updatedNote;
     },
-    async onSuccess(_, { id }) {
-      await queryClient.invalidateQueries({ queryKey: ["notes"] });
-      await queryClient.invalidateQueries({ queryKey: ["notes", id] });
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["notes"] });
+      queryClient.invalidateQueries({ queryKey: ["notes", id] });
     },
   });
 };

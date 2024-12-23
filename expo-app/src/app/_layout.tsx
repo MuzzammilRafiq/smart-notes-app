@@ -16,7 +16,6 @@ import AuthProvider from "../providers/AuthProvider";
 import QueryProvider from "../providers/QueryProvider";
 import { Session } from "@supabase/supabase-js";
 import { supabase } from "../supabase/supabase";
-import "../../global.css";
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {

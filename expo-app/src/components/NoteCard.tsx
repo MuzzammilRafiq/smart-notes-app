@@ -12,14 +12,14 @@ export const NoteCard = ({ note }: { note: NoteType }) => {
 
   const previewText =
     note.body.substring(0, 40) + (note.body.length > 40 ? "..." : "");
-
+  const { id, ...other } = note;
   return (
     <Link
       href={{
         // @ts-ignore
         pathname: `/note/${note.id}`,
         params: {
-          ...note,
+          ...other,
           created_at: new Date(note.created_at).toISOString(),
           updated_at: new Date(note.updated_at).toISOString(),
         },

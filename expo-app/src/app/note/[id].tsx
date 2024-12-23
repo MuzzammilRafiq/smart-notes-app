@@ -4,6 +4,8 @@ import {
   TouchableOpacity,
   Modal,
   TouchableWithoutFeedback,
+  TextInput,
+  ActivityIndicator,
 } from "react-native";
 import { ThemedText } from "~/src/components/ThemedText";
 import { ThemedView } from "~/src/components/ThemedView";
@@ -14,9 +16,12 @@ import { Route } from "expo-router";
 import { Colors } from "~/src/constants/Colors";
 import Feather from "@expo/vector-icons/Feather";
 import { useState } from "react";
-
-const formatDate = (date: string) => {
-  return new Date(date).toLocaleDateString("en-US", {
+import AntDesign from "@expo/vector-icons/AntDesign";
+import { useQueryClient } from "@tanstack/react-query";
+import { useUpdateNote } from "~/src/api/notes";
+// import FontAwesome from '@expo/vector-icons/FontAwesome';
+const formatDate = (date: Date) => {
+  return date.toLocaleDateString("en-US", {
     year: "2-digit",
     month: "short",
     day: "2-digit",
@@ -26,15 +31,58 @@ const formatDate = (date: string) => {
 };
 
 export default function NoteScreen() {
+  const params = useLocalSearchParams<NoteType & Route>();
+  const [note, setNote] = useState<NoteType>({
+    id: params.id as string,
+    title: params.title as string,
+    body: params.body as string,
+    group: params.group as string,
+    created_at: new Date(params.created_at as string),
+    updated_at: new Date(params.updated_at as string),
+    userId: params.userId as string,
+    embed_id: params.embed_id as string,
+  });
+
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const [editTitle, setEditTitle] = useState(note.title);
+  const [editBody, setEditBody] = useState(note.body);
   const theme = useColorScheme() ?? "light";
-  const { id, body, created_at, embed_id, group, title, updated_at, userId } =
-    useLocalSearchParams<NoteType & Route>();
-  const createAtFormat = formatDate(created_at);
-  const updatedAtFormat = formatDate(updated_at);
-  console.log("embed_id", created_at, updated_at);
+  // console.log(JSON.stringify(updateNoteMutation));
+
+  const handleClose = () => {
+    setIsModalVisible(false);
+    setEditBody(note.body);
+    setEditTitle(note.title);
+  };
+  const updateNoteMutation = useUpdateNote({
+    id: Array.isArray(params.id) ? params.id[0] : params.id,
+    title: editTitle,
+    body: editBody,
+  });
+
+  const handleSave = async () => {
+    try {
+      const data = await updateNoteMutation.mutateAsync();
+      setNote({
+        ...note,
+        title: data.title,
+        body: data.body,
+        updated_at: new Date(data.updated_at),
+        group: data.group,
+        embed_id: data.embed_id,
+      });
+      setIsModalVisible(false);
+    } catch (error) {
+      console.error("Error updating note:", error);
+    }
+  };
+
+  if (updateNoteMutation.isPending) {
+    return <ActivityIndicator />;
+  }
+
   return (
-    <ThemedView style={styles.container}>
+    <ThemedView style={styles.container} className="bg-gray-100">
       <ThemedView style={styles.card}>
         <ThemedView style={styles.header}>
           <ThemedView
@@ -43,7 +91,7 @@ export default function NoteScreen() {
               { backgroundColor: groupsColors[theme]["personal"] },
             ]}
           >
-            <ThemedText style={styles.group}>{group}</ThemedText>
+            <ThemedText style={styles.group}>{note.group}</ThemedText>
           </ThemedView>
           <TouchableOpacity
             style={styles.editButton}
@@ -52,15 +100,17 @@ export default function NoteScreen() {
             <Feather name="edit" size={22} color={"white"} />
           </TouchableOpacity>
         </ThemedView>
-        <ThemedText style={styles.title}>{title}</ThemedText>
+        <ThemedText style={styles.title}>{note.title}</ThemedText>
         <ThemedView style={styles.divider} />
-        <ThemedText style={styles.body}>{body}</ThemedText>
+        <ThemedText style={styles.body}>{note.body}</ThemedText>
 
         <ThemedView style={styles.metaContainer}>
-          <ThemedText style={styles.date}>Created: {createAtFormat}</ThemedText>
-          {updatedAtFormat !== createAtFormat && (
+          <ThemedText style={styles.date}>
+            Created: {formatDate(note.created_at)}
+          </ThemedText>
+          {formatDate(note.updated_at) !== formatDate(note.created_at) && (
             <ThemedText style={styles.date}>
-              Updated: {updatedAtFormat}
+              Updated: {formatDate(note.updated_at)}
             </ThemedText>
           )}
         </ThemedView>
@@ -76,14 +126,42 @@ export default function NoteScreen() {
           <ThemedView style={styles.modalOverlay}>
             <TouchableWithoutFeedback>
               <ThemedView style={styles.modalContent}>
-                <ThemedText style={styles.modalTitle}>Edit Note</ThemedText>
-                {/* Add your edit form components here */}
-                <TouchableOpacity
-                  style={styles.closeButton}
-                  onPress={() => setIsModalVisible(false)}
+                <ThemedView style={{ backgroundColor: "white", width: "100%" }}>
+                  <TextInput
+                    style={styles.input}
+                    value={editTitle}
+                    onChangeText={setEditTitle}
+                    placeholder="Title"
+                  />
+                  <TextInput
+                    style={[styles.input, styles.bodyInput]}
+                    value={editBody}
+                    onChangeText={setEditBody}
+                    placeholder="Body"
+                    multiline
+                  />
+                </ThemedView>
+                <ThemedView
+                  style={{
+                    flexDirection: "row",
+                    gap: 10,
+                    backgroundColor: "white",
+                    justifyContent: "space-evenly",
+                  }}
                 >
-                  <ThemedText style={styles.closeButtonText}>Close</ThemedText>
-                </TouchableOpacity>
+                  <TouchableOpacity
+                    style={styles.saveButton}
+                    onPress={handleSave}
+                  >
+                    <AntDesign name="save" size={24} color="white" />
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={styles.closeButton}
+                    onPress={handleClose}
+                  >
+                    <AntDesign name="closesquare" size={24} color="white" />
+                  </TouchableOpacity>
+                </ThemedView>
               </ThemedView>
             </TouchableWithoutFeedback>
           </ThemedView>
@@ -180,7 +258,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   modalContent: {
-    width: "80%",
+    width: "90%",
     backgroundColor: "white",
     borderRadius: 20,
     padding: 20,
@@ -199,14 +277,32 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     marginBottom: 15,
   },
+  saveButton: {
+    marginTop: 20,
+    padding: 10,
+    backgroundColor: Colors.light.tint,
+    borderRadius: 10,
+    textAlign: "center",
+    alignItems: "center",
+  },
   closeButton: {
     marginTop: 20,
     padding: 10,
     backgroundColor: Colors.light.tint,
     borderRadius: 10,
+    textAlign: "center",
+    alignItems: "center",
   },
-  closeButtonText: {
-    color: "white",
-    fontWeight: "600",
+  input: {
+    padding: 10,
+    borderWidth: 1,
+    borderColor: "#ddd",
+    borderRadius: 3,
+    // height: 20,
+    marginBottom: 10,
+  },
+  bodyInput: {
+    height: 200,
+    // textAlignVertical: "top",
   },
 });

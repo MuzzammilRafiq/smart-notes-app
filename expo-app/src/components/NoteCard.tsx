@@ -1,14 +1,25 @@
 // NoteCard.tsx
 import React from "react";
-import { StyleSheet, View } from "react-native";
+import { Alert, StyleSheet, View } from "react-native";
 import { ThemedText } from "./ui/ThemedText";
 import { Link } from "expo-router";
 import { NoteType } from "../utils/types";
 import { COLORS, SPACING } from "../utils/constants";
+import AntDesign from "@expo/vector-icons/AntDesign";
+import { useDeleteNote } from "../api/notes";
 
 export const NoteCard = ({ note }: { note: NoteType }) => {
-  // note.created_at = new Date(note.created_at);
-  // note.updated_at = new Date(note.updated_at);
+  const usedeleteNote = useDeleteNote();
+  const handelDelete = async () => {
+    usedeleteNote.mutate(note.id as string);
+  };
+  const createTwoButtonAlert = () =>
+    Alert.alert(`Delete "${note.title}" ?`, "", [
+      {
+        text: "Cancel",
+      },
+      { text: "Delete", onPress: handelDelete },
+    ]);
 
   const previewText =
     note.body.substring(0, 40) + (note.body.length > 40 ? "..." : "");
@@ -26,8 +37,24 @@ export const NoteCard = ({ note }: { note: NoteType }) => {
       }}
       style={styles.card}
     >
-      <View>
-        <ThemedText style={styles.title}>{note.title}</ThemedText>
+      <View style={{ width: "100%" }}>
+        <View
+          style={{
+            display: "flex",
+            flexDirection: "row",
+            justifyContent: "space-between",
+            // backgroundColor: "red",
+          }}
+        >
+          <ThemedText style={styles.title}>{note.title}</ThemedText>
+          <AntDesign
+            name="delete"
+            size={20}
+            color="black"
+            onPress={createTwoButtonAlert}
+            style={{ color: "brown" }}
+          />
+        </View>
         <ThemedText style={styles.preview}>{previewText}</ThemedText>
         <ThemedText style={styles.date}>
           {new Date(note.updated_at).toLocaleString(undefined, {
@@ -56,6 +83,12 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 3,
     elevation: 3,
+    // position: "relative",
+  },
+  deleteIcon: {
+    position: "absolute",
+    top: SPACING.sm,
+    right: SPACING.sm,
   },
   title: {
     fontSize: 18,

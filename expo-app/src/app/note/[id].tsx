@@ -17,7 +17,6 @@ import { Colors } from "~/src/constants/Colors";
 import Feather from "@expo/vector-icons/Feather";
 import { useState } from "react";
 import AntDesign from "@expo/vector-icons/AntDesign";
-import { useQueryClient } from "@tanstack/react-query";
 import { useUpdateNote } from "~/src/api/notes";
 // import FontAwesome from '@expo/vector-icons/FontAwesome';
 const formatDate = (date: Date) => {
@@ -39,15 +38,13 @@ export default function NoteScreen() {
     group: params.group as string,
     created_at: new Date(params.created_at as string),
     updated_at: new Date(params.updated_at as string),
-    userId: params.userId as string,
+    user_id: params.user_id as string,
     embed_id: params.embed_id as string,
   });
-
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [editTitle, setEditTitle] = useState(note.title);
   const [editBody, setEditBody] = useState(note.body);
   const theme = useColorScheme() ?? "light";
-  // console.log(JSON.stringify(updateNoteMutation));
 
   const handleClose = () => {
     setIsModalVisible(false);

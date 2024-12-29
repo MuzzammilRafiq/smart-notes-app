@@ -1,11 +1,4 @@
-import {
-  Pressable,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  useColorScheme,
-  View,
-} from "react-native";
+import { Pressable, StyleSheet, Text, View } from "react-native";
 import { forwardRef } from "react";
 import { Colors } from "../constants/Colors";
 
@@ -25,6 +18,8 @@ const Button = forwardRef<View | null, ButtonProps>(
     );
   }
 );
+
+Button.displayName = "Button";
 
 const styles = StyleSheet.create({
   container: {

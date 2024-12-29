@@ -1,44 +1,26 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "~/src/supabase/supabase";
+import { NoteType } from "~/src/utils/types";
 
-export const useNotes = (userId: string) => {
-  return useQuery({
+export const useNotes = (user_id: string) => {
+  return useQuery<NoteType[]>({
     queryKey: ["notes"],
     queryFn: async () => {
       const { data, error } = await supabase
         .from("notes")
         .select("*")
-        .eq("userId", userId);
+        .eq("user_id", user_id)
+        .order("created_at", { ascending: false });
       if (error) {
         throw new Error(error.message);
       }
-      return data;
-    },
-  });
-};
-
-export const useNotesById = (id: string) => {
-  return useQuery({
-    queryKey: ["notes", id],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("notes")
-        .select("*")
-        .eq("id", id)
-        .single();
-
-      if (error) {
-        console.log("useNotesByIdError", error);
-        throw new Error(error.message);
-      }
-      return data;
+      return data as NoteType[];
     },
   });
 };
 
 export const useInsertNote = () => {
   const queryClient = useQueryClient();
-
   return useMutation({
     async mutationFn(data: any) {
       const { error, data: newNote } = await supabase
@@ -46,7 +28,7 @@ export const useInsertNote = () => {
         .insert({
           title: data.title,
           body: data.body,
-          userId: data.userId,
+          user_id: data.user_id,
         })
         .single();
 

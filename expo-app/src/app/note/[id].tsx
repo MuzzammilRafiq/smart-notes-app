@@ -1,14 +1,7 @@
 import { useLocalSearchParams } from "expo-router";
-import {
-  StyleSheet,
-  TouchableOpacity,
-  Modal,
-  TouchableWithoutFeedback,
-  TextInput,
-  ActivityIndicator,
-} from "react-native";
-import { ThemedText } from "~/src/components/ThemedText";
-import { ThemedView } from "~/src/components/ThemedView";
+import { StyleSheet, TouchableOpacity, ActivityIndicator } from "react-native";
+import { ThemedText } from "~/src/components/ui/ThemedText";
+import { ThemedView } from "~/src/components/ui/ThemedView";
 import { useColorScheme } from "~/src/hooks/useColorScheme.web";
 import { groupsColors } from "~/src/utils/groupsColors";
 import { NoteType } from "~/src/utils/types";
@@ -16,8 +9,8 @@ import { Route } from "expo-router";
 import { Colors } from "~/src/constants/Colors";
 import Feather from "@expo/vector-icons/Feather";
 import { useState } from "react";
-import AntDesign from "@expo/vector-icons/AntDesign";
 import { useUpdateNote } from "~/src/api/notes";
+import NoteModel from "~/src/components/NoteModel";
 // import FontAwesome from '@expo/vector-icons/FontAwesome';
 const formatDate = (date: Date) => {
   return date.toLocaleDateString("en-US", {
@@ -113,57 +106,16 @@ export default function NoteScreen() {
         </ThemedView>
       </ThemedView>
 
-      <Modal
-        animationType="fade"
-        transparent={true}
-        visible={isModalVisible}
-        onRequestClose={() => setIsModalVisible(false)}
-      >
-        <TouchableWithoutFeedback onPress={() => setIsModalVisible(false)}>
-          <ThemedView style={styles.modalOverlay}>
-            <TouchableWithoutFeedback>
-              <ThemedView style={styles.modalContent}>
-                <ThemedView style={{ backgroundColor: "white", width: "100%" }}>
-                  <TextInput
-                    style={styles.input}
-                    value={editTitle}
-                    onChangeText={setEditTitle}
-                    placeholder="Title"
-                  />
-                  <TextInput
-                    style={[styles.input, styles.bodyInput]}
-                    value={editBody}
-                    onChangeText={setEditBody}
-                    placeholder="Body"
-                    multiline
-                  />
-                </ThemedView>
-                <ThemedView
-                  style={{
-                    flexDirection: "row",
-                    gap: 10,
-                    backgroundColor: "white",
-                    justifyContent: "space-evenly",
-                  }}
-                >
-                  <TouchableOpacity
-                    style={styles.saveButton}
-                    onPress={handleSave}
-                  >
-                    <AntDesign name="save" size={24} color="white" />
-                  </TouchableOpacity>
-                  <TouchableOpacity
-                    style={styles.closeButton}
-                    onPress={handleClose}
-                  >
-                    <AntDesign name="closesquare" size={24} color="white" />
-                  </TouchableOpacity>
-                </ThemedView>
-              </ThemedView>
-            </TouchableWithoutFeedback>
-          </ThemedView>
-        </TouchableWithoutFeedback>
-      </Modal>
+      <NoteModel
+        body={editBody}
+        handleClose={handleClose}
+        handleSubmit={handleSave}
+        isModalVisible={isModalVisible}
+        setBody={setEditBody}
+        setIsModalVisible={setIsModalVisible}
+        setTitle={setEditTitle}
+        title={editTitle}
+      />
     </ThemedView>
   );
 }
@@ -247,59 +199,5 @@ const styles = StyleSheet.create({
     color: "white",
     fontSize: 14,
     fontWeight: "500",
-  },
-  modalOverlay: {
-    flex: 1,
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  modalContent: {
-    width: "90%",
-    backgroundColor: "white",
-    borderRadius: 20,
-    padding: 20,
-    alignItems: "center",
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
-    elevation: 5,
-  },
-  modalTitle: {
-    fontSize: 20,
-    fontWeight: "bold",
-    marginBottom: 15,
-  },
-  saveButton: {
-    marginTop: 20,
-    padding: 10,
-    backgroundColor: Colors.light.tint,
-    borderRadius: 10,
-    textAlign: "center",
-    alignItems: "center",
-  },
-  closeButton: {
-    marginTop: 20,
-    padding: 10,
-    backgroundColor: Colors.light.tint,
-    borderRadius: 10,
-    textAlign: "center",
-    alignItems: "center",
-  },
-  input: {
-    padding: 10,
-    borderWidth: 1,
-    borderColor: "#ddd",
-    borderRadius: 3,
-    // height: 20,
-    marginBottom: 10,
-  },
-  bodyInput: {
-    height: 200,
-    // textAlignVertical: "top",
   },
 });

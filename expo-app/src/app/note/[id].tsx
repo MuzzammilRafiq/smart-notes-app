@@ -24,25 +24,15 @@ const formatDate = (date: Date) => {
 
 export default function NoteScreen() {
   const params = useLocalSearchParams<NoteType & Route>();
-  const [note, setNote] = useState<NoteType>({
-    id: params.id as string,
-    title: params.title as string,
-    body: params.body as string,
-    group: params.group as string,
-    created_at: new Date(params.created_at as string),
-    updated_at: new Date(params.updated_at as string),
-    user_id: params.user_id as string,
-    embed_id: params.embed_id as string,
-  });
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [editTitle, setEditTitle] = useState(note.title);
-  const [editBody, setEditBody] = useState(note.body);
+  const [editTitle, setEditTitle] = useState(params.title as string);
+  const [editBody, setEditBody] = useState(params.body as string);
   const theme = useColorScheme() ?? "light";
 
   const handleClose = () => {
     setIsModalVisible(false);
-    setEditBody(note.body);
-    setEditTitle(note.title);
+    setEditBody(params.body as string);
+    setEditTitle(params.title as string);
   };
   const updateNoteMutation = useUpdateNote({
     id: Array.isArray(params.id) ? params.id[0] : params.id,
@@ -52,15 +42,7 @@ export default function NoteScreen() {
 
   const handleSave = async () => {
     try {
-      const data = await updateNoteMutation.mutateAsync();
-      setNote({
-        ...note,
-        title: data.title,
-        body: data.body,
-        updated_at: new Date(data.updated_at),
-        group: data.group,
-        embed_id: data.embed_id,
-      });
+      updateNoteMutation.mutate();
       setIsModalVisible(false);
     } catch (error) {
       console.error("Error updating note:", error);
@@ -81,7 +63,7 @@ export default function NoteScreen() {
               { backgroundColor: groupsColors[theme]["personal"] },
             ]}
           >
-            <ThemedText style={styles.group}>{note.group}</ThemedText>
+            <ThemedText style={styles.group}>{params.group}</ThemedText>
           </ThemedView>
           <TouchableOpacity
             style={styles.editButton}
@@ -90,17 +72,18 @@ export default function NoteScreen() {
             <Feather name="edit" size={22} color={"white"} />
           </TouchableOpacity>
         </ThemedView>
-        <ThemedText style={styles.title}>{note.title}</ThemedText>
+        <ThemedText style={styles.title}>{params.title}</ThemedText>
         <ThemedView style={styles.divider} />
-        <ThemedText style={styles.body}>{note.body}</ThemedText>
+        <ThemedText style={styles.body}>{params.body}</ThemedText>
 
         <ThemedView style={styles.metaContainer}>
           <ThemedText style={styles.date}>
-            Created: {formatDate(note.created_at)}
+            Created: {formatDate(new Date(params.created_at as string))}
           </ThemedText>
-          {formatDate(note.updated_at) !== formatDate(note.created_at) && (
+          {formatDate(new Date(params.created_at as string)) !==
+            formatDate(new Date(params.created_at as string)) && (
             <ThemedText style={styles.date}>
-              Updated: {formatDate(note.updated_at)}
+              Updated: {formatDate(new Date(params.created_at as string))}
             </ThemedText>
           )}
         </ThemedView>

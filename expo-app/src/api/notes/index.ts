@@ -3,7 +3,7 @@ import { supabase } from "~/src/supabase/supabase";
 import { NoteType } from "~/src/utils/types";
 
 export const useNotes = (user_id: string) => {
-  return useQuery<NoteType[]>({
+  return useQuery({
     queryKey: ["notes"],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -22,7 +22,7 @@ export const useNotes = (user_id: string) => {
 export const useInsertNote = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    async mutationFn(data: any) {
+    mutationFn: async (data: any) => {
       const { error, data: newNote } = await supabase
         .from("notes")
         .insert({
@@ -38,9 +38,7 @@ export const useInsertNote = () => {
       }
       return newNote;
     },
-    async onSuccess() {
-      await queryClient.invalidateQueries({ queryKey: ["notes"] });
-    },
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["notes"] }),
   });
 };
 
@@ -80,18 +78,16 @@ export const useUpdateNote = ({
   });
 };
 
-export const useDeleteProduct = () => {
+export const useDeleteNote = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    async mutationFn(id: number) {
-      const { error } = await supabase.from("products").delete().eq("id", id);
+    mutationFn: async (id: string) => {
+      const { error } = await supabase.from("notes").delete().eq("id", id);
       if (error) {
         throw new Error(error.message);
       }
     },
-    async onSuccess() {
-      await queryClient.invalidateQueries({ queryKey: ["notes"] });
-    },
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["notes"] }),
   });
 };

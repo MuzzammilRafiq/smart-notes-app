@@ -25,36 +25,35 @@ export const NoteCard = ({ note }: { note: NoteType }) => {
     note.body.substring(0, 40) + (note.body.length > 40 ? "..." : "");
   const { id, ...other } = note;
   return (
-    <Link
-      href={{
-        // @ts-ignore
-        pathname: `/note/${note.id}`,
-        params: {
-          ...other,
-          created_at: new Date(note.created_at).toISOString(),
-          updated_at: new Date(note.updated_at).toISOString(),
-        },
-      }}
-      style={styles.card}
-    >
-      <View style={{ width: "100%" }}>
-        <View
-          style={{
-            display: "flex",
-            flexDirection: "row",
-            justifyContent: "space-between",
-            // backgroundColor: "red",
-          }}
-        >
-          <ThemedText style={styles.title}>{note.title}</ThemedText>
-          <AntDesign
-            name="delete"
-            size={20}
-            color="black"
-            onPress={createTwoButtonAlert}
-            style={{ color: "brown" }}
-          />
-        </View>
+    <View style={styles.card}>
+      <View
+        style={{
+          display: "flex",
+          flexDirection: "row",
+          justifyContent: "space-between",
+          // backgroundColor: "red",
+        }}
+      >
+        <ThemedText style={styles.title}>{note.title}</ThemedText>
+        <AntDesign
+          name="delete"
+          size={24}
+          color="black"
+          onPress={createTwoButtonAlert}
+          style={{ color: "brown" }}
+        />
+      </View>
+      <Link
+        href={{
+          // @ts-ignore
+          pathname: `/note/${note.id}`,
+          params: {
+            ...other,
+            created_at: new Date(note.created_at).toISOString(),
+            updated_at: new Date(note.updated_at).toISOString(),
+          },
+        }}
+      >
         <ThemedText style={styles.preview}>{previewText}</ThemedText>
         <ThemedText style={styles.date}>
           {new Date(note.updated_at).toLocaleString(undefined, {
@@ -62,8 +61,8 @@ export const NoteCard = ({ note }: { note: NoteType }) => {
             timeStyle: "short",
           })}
         </ThemedText>
-      </View>
-    </Link>
+      </Link>
+    </View>
   );
 };
 

@@ -6,7 +6,7 @@ import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 
 import { useColorScheme } from "~/src/hooks/useColorScheme.web";
-import { HapticTab } from "~/src/components/HapticTab";
+import { HapticTab } from "~/src/components/ui/HapticTab";
 import TabBarBackground from "~/src/components/ui/TabBarBackground";
 import { Colors } from "~/src/constants/Colors";
 import { useAuth } from "~/src/providers/AuthProvider";

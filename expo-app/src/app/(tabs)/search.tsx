@@ -1,8 +1,8 @@
 import { StyleSheet } from "react-native";
 
-import ParallaxScrollView from "~/src/components/ParallaxScrollView";
-import { ThemedText } from "~/src/components/ThemedText";
-import { ThemedView } from "~/src/components/ThemedView";
+import ParallaxScrollView from "~/src/components/ui/ParallaxScrollView";
+import { ThemedText } from "~/src/components/ui/ThemedText";
+import { ThemedView } from "~/src/components/ui/ThemedView";
 
 export default function TabTwoScreen() {
   return (

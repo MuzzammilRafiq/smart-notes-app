@@ -1,9 +1,9 @@
 import { StyleSheet } from "react-native";
 import Animated, { useAnimatedRef } from "react-native-reanimated";
 
-import { ThemedView } from "~/src/components/ThemedView";
+import { ThemedView } from "~/src/components/ui/ThemedView";
 import { useBottomTabOverflow } from "~/src/components/ui/TabBarBackground";
-import Header from "~/src/components/Header";
+import Header from "~/src/components/ui/Header";
 
 export default function ParallaxScrollView({
   children,

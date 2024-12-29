@@ -1,9 +1,9 @@
 import { useState, useEffect } from "react";
-import { supabase } from "../lib/supabase";
 import { StyleSheet, Alert } from "react-native";
 import { Button, Input } from "@rneui/themed";
 import { Session } from "@supabase/supabase-js";
-import { ThemedView } from "./ThemedView";
+import { ThemedView } from "./ui/ThemedView";
+import { supabase } from "../supabase/supabase";
 
 export default function Account({ session }: { session: Session }) {
   const [loading, setLoading] = useState(true);
@@ -13,7 +13,7 @@ export default function Account({ session }: { session: Session }) {
 
   useEffect(() => {
     if (session) getProfile();
-  }, [session]);
+  });
 
   async function getProfile() {
     try {

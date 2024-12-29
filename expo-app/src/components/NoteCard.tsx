@@ -1,7 +1,7 @@
 // NoteCard.tsx
 import React from "react";
 import { StyleSheet, View } from "react-native";
-import { ThemedText } from "./ThemedText";
+import { ThemedText } from "./ui/ThemedText";
 import { Link } from "expo-router";
 import { NoteType } from "../utils/types";
 import { COLORS, SPACING } from "../utils/constants";

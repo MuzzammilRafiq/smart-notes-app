@@ -1,6 +1,6 @@
 import { View, Text, TextInput, StyleSheet, Alert } from "react-native";
 import React, { useState } from "react";
-import Button from "../../components/Button";
+import Button from "../../components/ui/Button";
 import { Link, Stack } from "expo-router";
 import { supabase } from "~/src/supabase/supabase";
 import { Colors } from "~/src/constants/Colors";

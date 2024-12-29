@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Alert, StyleSheet, AppState } from "react-native";
 import { Button, Input } from "@rneui/themed";
-import { ThemedView } from "./ThemedView";
+import { ThemedView } from "./ui/ThemedView";
 import { supabase } from "../supabase/supabase";
 
 // Tells Supabase Auth to continuously refresh the session automatically if

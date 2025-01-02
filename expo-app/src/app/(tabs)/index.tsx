@@ -51,7 +51,7 @@ export default function Notes() {
         style={styles.addButton}
         onPress={() => setIsModalVisible(true)}
       >
-        <ThemedText style={styles.addButtonText}>Add Note</ThemedText>
+        <ThemedText style={styles.addButtonText}>Add Notes</ThemedText>
       </TouchableOpacity>
       <ThemedView style={styles.titleContainer}>
         <ThemedView

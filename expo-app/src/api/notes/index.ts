@@ -1,6 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "~/src/supabase/supabase";
 import { NoteType } from "~/src/utils/types";
+import { makeEmbed } from "./make_embed";
 
 export const useNotes = (user_id: string) => {
   return useQuery({
@@ -30,12 +31,22 @@ export const useInsertNote = () => {
           body: data.body,
           user_id: data.user_id,
         })
+        .select("*")
         .single();
 
       if (error) {
         console.log("useInsertProductError", error);
         throw new Error(error.message);
       }
+      console.log("newNote", newNote);
+      const embed_id = await makeEmbed(newNote as NoteType);
+      await supabase
+        .from("notes")
+        .update({ embed_id: embed_id, updated_at: new Date() })
+        .eq("id", (newNote as NoteType).id)
+        .select("*")
+        .single();
+
       return newNote;
     },
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ["notes"] }),
@@ -69,6 +80,13 @@ export const useUpdateNote = ({
       if (error) {
         throw new Error(error.message);
       }
+      const embed_id = await makeEmbed(updatedNote as NoteType);
+      await supabase
+        .from("notes")
+        .update({ embed_id: embed_id, updated_at: new Date() })
+        .eq("id", (updatedNote as NoteType).id)
+        .single();
+
       return updatedNote;
     },
     onSuccess: () => {

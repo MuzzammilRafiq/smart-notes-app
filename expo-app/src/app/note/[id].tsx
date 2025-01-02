@@ -42,7 +42,7 @@ export default function NoteScreen() {
 
   const handleSave = async () => {
     try {
-      updateNoteMutation.mutate();
+      updateNoteMutation.mutateAsync();
       setIsModalVisible(false);
     } catch (error) {
       console.error("Error updating note:", error);

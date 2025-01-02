@@ -14,6 +14,7 @@ import { useColorScheme } from "~/src/hooks/useColorScheme.web";
 import { SafeAreaView } from "react-native-safe-area-context";
 import AuthProvider from "../providers/AuthProvider";
 import QueryProvider from "../providers/QueryProvider";
+
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {

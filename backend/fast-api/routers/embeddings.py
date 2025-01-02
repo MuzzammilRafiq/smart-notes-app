@@ -1,6 +1,6 @@
 import uuid
 from chromadb import Metadata
-from fastapi import APIRouter, HTTPException, Request  # Add Request import
+from fastapi import APIRouter, HTTPException, Request
 from typing import TypeVar, Union, List
 import time
 
@@ -35,29 +35,28 @@ def get_all_embeddings():
 @router.post("/add")
 def add_embeddings(request: AddEmbeddingsRequest):
     try:
-        assert len(request.userIds) == len(request.texts)
+        assert len(request.noteIds) == len(request.texts)
         embeddings = model.generate_embeddings(request.texts)
         collection = chroma_client.get_or_create_collection(name="all_collections")
         ids = [str(uuid.uuid4()) for _ in range(len(request.texts))]
         metadata: OneOrMany[Metadata] = [
             {"userId": str(userId), "timestamp": float(time.time())}
-            for userId in request.userIds
+            for userId in request.noteIds
         ]
 
-        response = collection.add(
+        collection.add(
             embeddings=embeddings, documents=request.texts, metadatas=metadata, ids=ids
         )
-        print("response", response)
 
         return {
-            "status": "Embeddings added successfully",
+            "ids": ids,
         }
     except Exception as e:
         print("error-->", e)
         return {"error": str(e)}
 
 
-@router.post("/get-similar")  # Change to POST method
+@router.get("/get-similar")  # Change to POST method
 def get_similar_embeddings(request: GetSimilarEmbeddingsRequest):
     try:
         collection = chroma_client.get_or_create_collection(name="all_collections")
@@ -136,6 +135,17 @@ def get_group_of_texts(request: GetGroupForText):
             n_results=n_results,
         )
         return r
+    except Exception as e:
+        print(e)
+        raise HTTPException(status_code=500, detail="internal server error")
+
+
+@router.delete("/delete/{embedding_id}")
+def delete_embedding(embedding_id: str):
+    try:
+        collection = chroma_client.get_or_create_collection(name="all_collections")
+        collection.delete(ids=[embedding_id])
+        return {"status": "Embedding deleted successfully"}
     except Exception as e:
         print(e)
         raise HTTPException(status_code=500, detail="internal server error")

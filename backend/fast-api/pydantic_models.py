@@ -8,7 +8,7 @@ class GetEmbeddingsRequest(BaseModel):
 
 class AddEmbeddingsRequest(BaseModel):
     texts: List[str]
-    userIds: List[str]
+    noteIds: List[str]
 
 
 class GetSimilarEmbeddingsRequest(BaseModel):
@@ -33,4 +33,8 @@ class CentroidRequest(BaseModel):
 
 class GetGroupForText(BaseModel):
     texts: List[str]
-    n_results: int = 2
+    n_results: int = 1
+
+
+class GG(BaseModel):
+    data: str

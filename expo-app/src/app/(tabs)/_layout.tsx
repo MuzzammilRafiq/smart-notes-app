@@ -10,7 +10,7 @@ import { HapticTab } from "~/src/components/ui/HapticTab";
 import TabBarBackground from "~/src/components/ui/TabBarBackground";
 import { Colors } from "~/src/constants/Colors";
 import { useAuth } from "~/src/providers/AuthProvider";
-
+import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 export default function TabLayout() {
   const colorScheme = useColorScheme();
   const tintColor = Colors[colorScheme ?? "light"].tint;
@@ -61,6 +61,21 @@ export default function TabLayout() {
           tabBarIcon: () => (
             <FontAwesome5
               name="sticky-note"
+              size={24}
+              color={tintColor}
+              style={styles.tabIcon}
+            />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="groups"
+        options={{
+          title: "Groups",
+
+          tabBarIcon: () => (
+            <FontAwesome6
+              name="layer-group"
               size={24}
               color={tintColor}
               style={styles.tabIcon}

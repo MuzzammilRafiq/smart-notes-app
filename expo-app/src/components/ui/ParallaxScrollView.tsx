@@ -10,7 +10,7 @@ export default function ParallaxScrollView({
   title,
 }: {
   children: React.ReactNode;
-  title: string;
+  title?: string;
 }) {
   const scrollRef = useAnimatedRef<Animated.ScrollView>();
   const bottom = useBottomTabOverflow();
@@ -23,7 +23,7 @@ export default function ParallaxScrollView({
         scrollIndicatorInsets={{ bottom }}
         contentContainerStyle={{ paddingBottom: bottom }}
       >
-        <Header title={title} />
+        {title && <Header title={title} />}
         <ThemedView style={styles.content}>{children}</ThemedView>
       </Animated.ScrollView>
     </ThemedView>

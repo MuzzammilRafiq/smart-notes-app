@@ -22,7 +22,7 @@ export const NoteCard = ({ note }: { note: NoteType }) => {
     ]);
 
   const previewText =
-    note.body.substring(0, 40) + (note.body.length > 40 ? "..." : "");
+    note.body.substring(0, 100) + (note.body.length > 100 ? "..." : "");
   const { id, ...other } = note;
   return (
     <View style={styles.card}>
@@ -55,6 +55,7 @@ export const NoteCard = ({ note }: { note: NoteType }) => {
         }}
       >
         <ThemedText style={styles.preview}>{previewText}</ThemedText>
+        {"\n"}
         <ThemedText style={styles.date}>
           {new Date(note.updated_at).toLocaleString(undefined, {
             dateStyle: "short",
@@ -82,6 +83,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 3,
     elevation: 3,
+    height: 150,
     // position: "relative",
   },
   deleteIcon: {

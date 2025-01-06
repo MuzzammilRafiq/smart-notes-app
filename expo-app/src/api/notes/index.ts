@@ -3,10 +3,13 @@ import { supabase } from "~/src/supabase/supabase";
 import { NoteType } from "~/src/utils/types";
 import { makeEmbed } from "./make_embed";
 
-export const useNotes = (user_id: string) => {
+export const useNotes = (user_id: string | undefined) => {
   return useQuery({
     queryKey: ["notes"],
     queryFn: async () => {
+      if (!user_id) {
+        return [];
+      }
       const { data, error } = await supabase
         .from("notes")
         .select("*")
@@ -42,7 +45,7 @@ export const useInsertNote = () => {
       const embed_id = await makeEmbed(newNote as NoteType);
       await supabase
         .from("notes")
-        .update({ embed_id: embed_id, updated_at: new Date() })
+        .update({ embed_id: embed_id[0], updated_at: new Date() })
         .eq("id", (newNote as NoteType).id)
         .select("*")
         .single();
@@ -81,13 +84,13 @@ export const useUpdateNote = ({
         throw new Error(error.message);
       }
       const embed_id = await makeEmbed(updatedNote as NoteType);
-      await supabase
+      const updatedEmbedNote = await supabase
         .from("notes")
-        .update({ embed_id: embed_id, updated_at: new Date() })
+        .update({ embed_id: embed_id[0], updated_at: new Date() })
         .eq("id", (updatedNote as NoteType).id)
+        .select("*")
         .single();
-
-      return updatedNote;
+      return updatedEmbedNote;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["notes"] });

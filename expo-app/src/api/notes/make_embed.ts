@@ -1,6 +1,6 @@
 import { NoteType } from "~/src/utils/types";
 
-export const makeEmbed = async (note: NoteType) => {
+export const makeEmbed = async (note: NoteType): Promise<string[]> => {
   const { title, body, id } = note;
   // const host =
   //   process.env.NODE_ENV === "development"
@@ -10,7 +10,7 @@ export const makeEmbed = async (note: NoteType) => {
   const text = `"${title}" is title\n "${body}" is body`;
   try {
     const response = await fetch(
-      "https://3d9a-43-231-58-157.ngrok-free.app/embeddings/add",
+      "https://e728-43-231-58-157.ngrok-free.app/embeddings/add",
       {
         method: "POST",
         headers: {
@@ -21,9 +21,11 @@ export const makeEmbed = async (note: NoteType) => {
     );
 
     const res = await response.json();
-    console.log("Success:", res);
-    return res["ids"][0];
+    // console.log("Success:", res);
+    return res["ids"];
+    // return res["ids"][0];
   } catch (error) {
     console.error("Error:", error);
+    return [];
   }
 };

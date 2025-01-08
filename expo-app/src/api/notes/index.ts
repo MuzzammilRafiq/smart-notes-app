@@ -2,8 +2,9 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "~/src/supabase/supabase";
 import { NoteType } from "~/src/utils/types";
 import { makeEmbed } from "./make_embed";
+import { searchEmbed } from "./search_embed";
 
-export const useNotes = (user_id: string | undefined) => {
+export const useGetNotes = (user_id: string | undefined) => {
   return useQuery({
     queryKey: ["notes"],
     queryFn: async () => {
@@ -20,6 +21,42 @@ export const useNotes = (user_id: string | undefined) => {
       }
       return data as NoteType[];
     },
+  });
+};
+
+export const useGetNotesByIds = (
+  user_id: string | undefined,
+  searchQuery: string
+) => {
+  return useQuery({
+    queryKey: ["notes", user_id, searchQuery], // Include searchQuery in the query key
+    queryFn: async () => {
+      if (!user_id || !searchQuery) {
+        return [];
+      }
+      const noteIds = await searchEmbed({
+        query: String(encodeURIComponent(searchQuery)),
+      });
+
+      if (noteIds.length === 0) {
+        return [];
+      }
+
+      const { data, error } = await supabase
+        .from("notes")
+        .select("*")
+        .eq("user_id", user_id)
+        .in("id", noteIds) // Filter by note IDs
+        .order("created_at", { ascending: false });
+
+      if (error) {
+        // console.log("52", error);
+        throw new Error(error.message);
+      }
+
+      return data as NoteType[];
+    },
+    enabled: !!user_id && !!searchQuery, // Only run the query if user_id and searchQuery are provided
   });
 };
 
@@ -41,7 +78,6 @@ export const useInsertNote = () => {
         console.log("useInsertProductError", error);
         throw new Error(error.message);
       }
-      console.log("newNote", newNote);
       const embed_id = await makeEmbed(newNote as NoteType);
       await supabase
         .from("notes")
@@ -84,6 +120,7 @@ export const useUpdateNote = ({
         throw new Error(error.message);
       }
       const embed_id = await makeEmbed(updatedNote as NoteType);
+      console.log("embed_ID", embed_id);
       const updatedEmbedNote = await supabase
         .from("notes")
         .update({ embed_id: embed_id[0], updated_at: new Date() })

@@ -1,7 +1,7 @@
 import { Link } from "expo-router";
 import React from "react";
 import { ActivityIndicator, StyleSheet } from "react-native";
-import { useNotes } from "~/src/api/notes";
+import { useGetNotes } from "~/src/api/notes";
 
 import ParallaxScrollView from "~/src/components/ui/ParallaxScrollView";
 import { ThemedText } from "~/src/components/ui/ThemedText";
@@ -12,7 +12,7 @@ import { NoteType } from "~/src/utils/types";
 
 export default function Notes() {
   const { profile } = useAuth();
-  const { data: notes, error, isLoading } = useNotes(profile?.id as string);
+  const { data: notes, error, isLoading } = useGetNotes(profile?.id as string);
 
   if (isLoading) {
     return <ActivityIndicator />;

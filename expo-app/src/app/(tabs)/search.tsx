@@ -1,115 +1,118 @@
+import { useRouter } from "expo-router";
 import React, { useState } from "react";
 import { StyleSheet, TextInput, View, Text, Button } from "react-native";
-import { useNotes } from "~/src/api/notes";
+import { useGetNotes } from "~/src/api/notes";
+import { NoteCard } from "~/src/components/NoteCard";
 // import { NoteCard } from "~/src/components/NoteCard";
 import ParallaxScrollView from "~/src/components/ui/ParallaxScrollView";
 import { ThemedView } from "~/src/components/ui/ThemedView";
 import { useAuth } from "~/src/providers/AuthProvider";
 import { NoteType } from "~/src/utils/types";
 
-const HighlightedText = ({ text, searchQuery, style, isBody = false }: any) => {
-  if (!searchQuery) {
-    return (
-      <Text style={style}>{isBody ? text.slice(0, 100) + "..." : text}</Text>
-    );
-  }
+// const HighlightedText = ({ text, searchQuery, style, isBody = false }: any) => {
+//   if (!searchQuery) {
+//     return (
+//       <Text style={style}>{isBody ? text.slice(0, 100) + "..." : text}</Text>
+//     );
+//   }
 
-  const getPreviewText = ({
-    text,
-    searchQuery,
-  }: {
-    text: string;
-    searchQuery: string;
-  }) => {
-    const index = text.toLowerCase().indexOf(searchQuery.toLowerCase());
-    if (index === -1) return { text, startEllipsis: false, endEllipsis: false };
+//   const getPreviewText = ({
+//     text,
+//     searchQuery,
+//   }: {
+//     text: string;
+//     searchQuery: string;
+//   }) => {
+//     const index = text.toLowerCase().indexOf(searchQuery.toLowerCase());
+//     if (index === -1) return { text, startEllipsis: false, endEllipsis: false };
 
-    const start = Math.max(0, index - 30);
-    const end = Math.min(text.length, index + searchQuery.length + 30);
+//     const start = Math.max(0, index - 30);
+//     const end = Math.min(text.length, index + searchQuery.length + 30);
 
-    return {
-      text: `${start > 0 ? "..." : ""}${text.slice(start, end)}${
-        end < text.length ? "..." : ""
-      }`,
-      startEllipsis: start > 0,
-      endEllipsis: end < text.length,
-    };
-  };
+//     return {
+//       text: `${start > 0 ? "..." : ""}${text.slice(start, end)}${
+//         end < text.length ? "..." : ""
+//       }`,
+//       startEllipsis: start > 0,
+//       endEllipsis: end < text.length,
+//     };
+//   };
 
-  if (isBody) {
-    const {
-      text: previewText,
-      startEllipsis,
-      endEllipsis,
-    } = getPreviewText({ text, searchQuery });
-    const parts: string[] = previewText.split(
-      new RegExp(`(${searchQuery})`, "gi")
-    );
+//   if (isBody) {
+//     const {
+//       text: previewText,
+//       startEllipsis,
+//       endEllipsis,
+//     } = getPreviewText({ text, searchQuery });
+//     const parts: string[] = previewText.split(
+//       new RegExp(`(${searchQuery})`, "gi")
+//     );
 
-    return (
-      <Text style={style}>
-        {parts.map((part, index) => (
-          <Text
-            key={index}
-            style={
-              part.toLowerCase() === searchQuery.toLowerCase()
-                ? [style, styles.highlightedText]
-                : style
-            }
-          >
-            {part}
-          </Text>
-        ))}
-      </Text>
-    );
-  }
+//     return (
+//       <Text style={style}>
+//         {parts.map((part, index) => (
+//           <Text
+//             key={index}
+//             style={
+//               part.toLowerCase() === searchQuery.toLowerCase()
+//                 ? [style, styles.highlightedText]
+//                 : style
+//             }
+//           >
+//             {part}
+//           </Text>
+//         ))}
+//       </Text>
+//     );
+//   }
 
-  const parts: [string] = text.split(new RegExp(`(${searchQuery})`, "gi"));
-  return (
-    <Text style={style}>
-      {parts.map((part, index) => (
-        <Text
-          key={index}
-          style={
-            part.toLowerCase() === searchQuery.toLowerCase()
-              ? [style, styles.highlightedText]
-              : style
-          }
-        >
-          {part}
-        </Text>
-      ))}
-    </Text>
-  );
-};
+//   const parts: [string] = text.split(new RegExp(`(${searchQuery})`, "gi"));
+//   return (
+//     <Text style={style}>
+//       {parts.map((part, index) => (
+//         <Text
+//           key={index}
+//           style={
+//             part.toLowerCase() === searchQuery.toLowerCase()
+//               ? [style, styles.highlightedText]
+//               : style
+//           }
+//         >
+//           {part}
+//         </Text>
+//       ))}
+//     </Text>
+//   );
+// };
 
-const HighlightedNoteCard = ({
-  note,
-  searchQuery,
-}: {
-  note: NoteType;
-  searchQuery: string;
-}) => {
-  return (
-    <View style={styles.noteCard}>
-      <HighlightedText
-        text={note.title}
-        searchQuery={searchQuery}
-        style={styles.noteTitle}
-      />
-      <HighlightedText
-        text={note.body}
-        searchQuery={searchQuery}
-        style={styles.noteBody}
-        isBody={true}
-      />
-    </View>
-  );
-};
+// const HighlightedNoteCard = ({
+//   note,
+//   searchQuery,
+// }: {
+//   note: NoteType;
+//   searchQuery: string;
+// }) => {
+//   return (
+//     <View style={styles.noteCard}>
+//       <HighlightedText
+//         text={note.title}
+//         searchQuery={searchQuery}
+//         style={styles.noteTitle}
+//       />
+//       <View style={styles.separator} />
+//       <HighlightedText
+//         text={note.body}
+//         searchQuery={searchQuery}
+//         style={styles.noteBody}
+//         isBody={true}
+//       />
+//     </View>
+//   );
+// };
 
 export default function TabTwoScreen() {
   const { session } = useAuth();
-  const { data: notes } = useNotes(session?.user?.id);
+  const { data: notes } = useGetNotes(session?.user?.id);
   const [searchQuery, setSearchQuery] = useState("");
 
   const filteredNotes = notes?.filter((note) => {
@@ -119,6 +122,7 @@ export default function TabTwoScreen() {
       note.body.toLowerCase().includes(query)
     );
   });
+  const router = useRouter();
 
   return (
     <ParallaxScrollView>
@@ -135,9 +139,12 @@ export default function TabTwoScreen() {
 
         <Button
           title="Advanced Search"
-          onPress={() => {
-            /* handle advanced search */
-          }}
+          onPress={() =>
+            router.push({
+              pathname: "/advanced-search",
+              params: { searchQuery: searchQuery, user_id: session?.user.id },
+            })
+          }
         />
         <ThemedView
           style={{
@@ -146,10 +153,10 @@ export default function TabTwoScreen() {
           }}
         >
           {filteredNotes?.map((note) => (
-            <HighlightedNoteCard
+            <NoteCard
               key={note.id}
               note={note}
-              searchQuery={searchQuery}
+              // searchQuery={searchQuery}
             />
           ))}
         </ThemedView>
@@ -204,5 +211,10 @@ const styles = StyleSheet.create({
   noteBody: {
     fontSize: 14,
     color: "#666666",
+  },
+  separator: {
+    height: 1,
+    backgroundColor: "#E0E0E0",
+    marginVertical: 8,
   },
 });

@@ -1,6 +1,6 @@
 import React from "react";
 import { ActivityIndicator, StyleSheet, TouchableOpacity } from "react-native";
-import { useInsertNote, useNotes } from "~/src/api/notes";
+import { useInsertNote, useGetNotes } from "~/src/api/notes";
 
 import { NoteCard } from "~/src/components/NoteCard";
 import NoteModel from "~/src/components/NoteModel";
@@ -12,7 +12,7 @@ import { useAuth } from "~/src/providers/AuthProvider";
 
 export default function Notes() {
   const { profile } = useAuth();
-  const { data: notes, error, isLoading } = useNotes(profile?.id as string);
+  const { data: notes, error, isLoading } = useGetNotes(profile?.id as string);
   const insertNote = useInsertNote();
   const [newNoteTitle, setNewNoteTitle] = React.useState("");
   const [newNoteBody, setNewNoteBody] = React.useState("");

@@ -12,7 +12,7 @@ class AddEmbeddingsRequest(BaseModel):
 
 
 class GetSimilarEmbeddingsRequest(BaseModel):
-    text: str
+    query: str
     n_results: int = 1
 
 

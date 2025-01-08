@@ -3,6 +3,9 @@ from chromadb import Metadata
 from fastapi import APIRouter, HTTPException, Request
 from typing import TypeVar, Union, List
 import time
+from fastapi import Query
+from urllib.parse import unquote
+from pprint import pprint
 
 # local imports
 from connection import ChromaDBConnection
@@ -57,17 +60,16 @@ def add_embeddings(request: AddEmbeddingsRequest):
 
 
 @router.get("/get-similar")  # Change to POST method
-def get_similar_embeddings(request: GetSimilarEmbeddingsRequest):
+def get_similar_embeddings(query: str, n_results: int = Query(default=1)):
     try:
         collection = chroma_client.get_or_create_collection(name="all_collections")
-        embeddings = model.generate_embeddings([request.text])
+        embeddings = model.generate_embeddings([query])
         r = collection.query(
             query_embeddings=embeddings[0],
-            n_results=request.n_results,
+            n_results=n_results,
         )
         return r
     except Exception as e:
-        print(e)
         raise HTTPException(
             status_code=500, detail="internal server error"
         )  # Raise HTTPException

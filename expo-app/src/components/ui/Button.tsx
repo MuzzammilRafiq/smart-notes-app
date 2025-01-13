@@ -9,9 +9,6 @@ type ButtonProps = {
 const Button = forwardRef<View | null, ButtonProps>(
   ({ text, ...pressableProps }, ref) => {
     return (
-      // <TouchableOpacity ref={ref} {...pressableProps} style={styles.container}>
-      //   <Text style={styles.text}>{text}</Text>
-      // </TouchableOpacity>
       <Pressable ref={ref} {...pressableProps} style={styles.container}>
         <Text style={styles.text}>{text}</Text>
       </Pressable>
@@ -23,10 +20,11 @@ Button.displayName = "Button";
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: Colors.dark.tint,
-    padding: 15,
+    backgroundColor: "#e15bb5",
+    padding: 8,
+    paddingHorizontal: 15,
     alignItems: "center",
-    borderRadius: 100,
+    borderRadius: 5,
     marginVertical: 10,
   },
   text: {

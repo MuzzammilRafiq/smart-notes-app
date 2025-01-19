@@ -46,12 +46,12 @@ export default function Notes() {
   }
 
   return (
-    <ParallaxScrollView>
+    <ParallaxScrollView title="Notes">
       <TouchableOpacity
         style={styles.addButton}
         onPress={() => setIsModalVisible(true)}
       >
-        <ThemedText style={styles.addButtonText}>Add Notes</ThemedText>
+        <ThemedText style={styles.addButtonText}>Add Note</ThemedText>
       </TouchableOpacity>
       <ThemedView style={styles.titleContainer}>
         <ThemedView
